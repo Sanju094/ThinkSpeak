@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Data Sender</title>
+</head>
+<body>
+    <h1>GPS Data Sender</h1>
+    <button onclick="getAndSendData()">Get & Send GPS Data</button>
+
+    <script>
+        async function getAndSendData() {
+            try {
+                const position = await getCurrentPosition();
+                const { latitude, longitude } = position.coords;
+
+                // Construct ThingSpeak API URL
+                const apiKey = '1C5VLV3GPUG49N15';
+                const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field1=${latitude}&field2=${longitude}`;
+
+                // Send data using fetch
+                const response = await fetch(url, { method: 'POST' });
+
+                if (response.ok) {
+                    console.log('GPS data sent successfully');
+                } else {
+                    console.error('Error sending GPS data');
+                }
+            } catch (error) {
+                console.error('Error getting GPS data:', error.message);
+            }
+        }
+
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+        }
+    </script>
+</body>
+</html>
